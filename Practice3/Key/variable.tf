@@ -1,13 +1,13 @@
 variable "region" {
     description  =  "Enter the region"
     type = string
-    default = "us-east-1"
+    default = "us-east-2"
 }
 
 variable "key_name" {
     description = "Enter key name"
     type = string
-    default = "virginia_key"
+    default = "ohio_key"
 }
 
 variable "key_file" {
