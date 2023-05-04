@@ -112,8 +112,11 @@ resource "aws_instance" "nagios_instance" {
   subnet_id                   = aws_subnet.public_subnet.id
   vpc_security_group_ids      = [aws_security_group.web_sg.id]
   associate_public_ip_address = true
-  user_data  = file("nagiosInstall.sh")
-  
+  user_data = <<-EOF
+#!/bin/bash
+echo "hello world"
+EOF
+
   tags  = {
     Name = "nagios_instance"
   }
