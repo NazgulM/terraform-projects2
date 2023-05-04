@@ -48,7 +48,7 @@ resource "aws_instance" "nagios_instance" {
   associate_public_ip_address = true
 
   user_data = <<-EOF
-set -x
+#!/bin/bash
 NAGIOS_ADMIN_PASSWORD="adminadmin"
 sudo apt update -y
 sudo apt install -y autoconf bc gawk dc build-essential gcc libc6 make wget unzip apache2 php libapache2-mod-php libgd-dev libmcrypt-dev make libssl-dev snmp libnet-snmp-perl gettext
