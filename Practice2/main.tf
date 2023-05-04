@@ -14,26 +14,42 @@ data "aws_ami" "ubuntu" {
   owners = ["099720109477"] # Canonical
 }
 
-resource "aws_instance" "web" {
-  ami           = data.aws_ami.ubuntu.id
-  instance_type = "t3.micro"
-  availability_zone = "us-east-1a"
-  key_name = aws_key_pair.deployer.key_name
-  vpc_security_group_ids = [aws_security_group.allow_tls.id]
-
-  tags = {
-    Name = "HelloChika"
-  }
-}
-
 resource "aws_key_pair" "deployer" {
   key_name   = "deployer-key"
   public_key = file("~/.ssh/id_rsa.pub")
+  tags = local.common_tags
+}
+
+resource "aws_instance" "web" {
+  ami           = data.aws_ami.ubuntu.id
+  instance_type = "t3.micro"
+  # count = 4
+  associate_public_ip_address = true
+  availability_zone = "us-east-1a"
+  key_name = aws_key_pair.deployer.key_name
+  user_data = file("httpd.sh")
+  vpc_security_group_ids = [aws_security_group.allow_tls.id]
+  tags = local.common_tags
+}
+
+
+resource "aws_ebs_volume" "example" {
+  availability_zone = "us-east-1a"
+  size              = 40
+  tags = local.common_tags
+}
+
+resource "aws_volume_attachment" "ebs_att" {
+  device_name = "/dev/sdh"
+  volume_id   = aws_ebs_volume.example.id
+  instance_id = aws_instance.web.id
 }
 
 resource "aws_security_group" "allow_tls" {
   name        = "allow_tls"
   description = "Allow TLS inbound traffic"
+  tags = local.common_tags
+
 
   ingress {
     description      = "TLS from VPC"
@@ -42,6 +58,7 @@ resource "aws_security_group" "allow_tls" {
     protocol         = "tcp"
     cidr_blocks      = ["0.0.0.0/0"]
   }
+
 
   ingress {
     description      = "TLS from VPC"
@@ -64,18 +81,6 @@ resource "aws_security_group" "allow_tls" {
     to_port          = 0
     protocol         = "-1"
     cidr_blocks      = ["0.0.0.0/0"]
-    ipv6_cidr_blocks = ["::/0"]
   }
+
 }
-
-
-
-
-
-
-
-
-
-
-
-

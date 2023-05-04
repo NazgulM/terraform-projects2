@@ -1,15 +1,15 @@
-output ec2 {
-    value = aws_instance.web.arn
+output ami {
+  value = aws_instance.web.ami
+}
+
+output arn {
+  value = aws_instance.web.arn
+}
+
+output instance_type {
+  value = aws_instance.web.instance_type
 }
 
 output public_ip {
-    value = aws_instance.web.public_ip
-}
-
-output ami {
-    value = aws_instance.web.ami
-}
-
-output type {
-    value = aws_instance.web.instance_type
+  value = aws_instance.web.public_ip
 }
